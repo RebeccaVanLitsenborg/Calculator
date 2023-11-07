@@ -62,3 +62,95 @@ if (mainContent) {
     // Append the "calculator" div to the main element in HTML
     mainContent.appendChild(calculator);
 }
+
+
+
+const previous = document.querySelector('.previous-operand');
+const current = document.querySelector('.current-operand');
+const outputDiv = document.querySelector('.output');
+const buttons = document.querySelectorAll('button');
+
+let currentInput = ''; 
+let previousValue = ''; 
+let currentOperation = null;
+
+
+function updateDisplay() {
+  current.textContent = currentInput;
+  previous.textContent = previousValue;
+  if (currentOperation) {
+    previous.textContent = `${previousValue} ${currentOperation}`;
+  }
+}
+
+// Add event listener to all buttons
+buttons.forEach(button => {
+  button.addEventListener('click', () => {
+    const buttonValue = button.textContent;
+    
+    if (button.hasAttribute('data-number')) {
+      // Handle number buttons
+      currentInput += buttonValue;
+    } else if (button.hasAttribute('data-operation')) {
+      // Handle operation buttons
+      if (currentInput !== '') {
+        if (previousValue !== '' && currentOperation) {
+          calculate();
+        } else {
+          previousValue = currentInput;
+        }
+        currentOperation = buttonValue;
+        currentInput = '';
+      }
+    } else if (button.hasAttribute('data-all-clear')) {
+      // Handle the "AC" button
+      currentInput = '';
+      previousValue = '';
+      currentOperation = null;
+    } else if (button.hasAttribute('data-delete')) {
+      // Handle the "Del" button
+      currentInput = currentInput.slice(0, -1);
+    } else if (button.hasAttribute('data-equals')) {
+      // Handle the "=" button
+      if (previousValue !== '' && currentOperation) {
+        calculate();
+        currentOperation = null;
+      }
+    }
+    
+    updateDisplay();
+  });
+});
+
+// Helper function to perform calculations
+function calculate() {
+  let result;
+  const operand1 = parseFloat(previousValue);
+  const operand2 = parseFloat(currentInput);
+  
+  switch (currentOperation) {
+    case '+':
+      result = operand1 + operand2;
+      break;
+    case '-':
+      result = operand1 - operand2;
+      break;
+    case '*':
+      result = operand1 * operand2;
+      break;
+    case '÷':
+      if (operand2 !== 0) {
+        result = operand1 / operand2;
+      } else {
+        result = 'Error';
+      }
+      break;
+    default:
+      result = 'Error';
+  }
+  
+  currentInput = result.toString();
+  previousValue = '';
+}
+
+updateDisplay();

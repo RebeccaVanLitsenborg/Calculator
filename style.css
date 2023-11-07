@@ -59,7 +59,7 @@ body {
     font-size: 1.5rem;
 }
 
-.output .previous-operand {
+.output .current-operand {
     color: #0b1e48;
     font-size: 2.5rem;
 }
